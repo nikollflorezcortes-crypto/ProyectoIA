@@ -1,0 +1,413 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IntelliPlan AI - Asistente Inteligente de Tareas y Planificación</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <!-- Header en Tiempo Real -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-info">
+          <h1>IntelliPlan AI</h1>
+          <p><span id="greetingText">Bienvenido</span> • Asistente Cognitivo de Tareas</p>
+        </div>
+      </div>
+
+      <!-- Barra de tiempo real: reloj, fecha y estado -->
+      <div class="realtime-clock-bar">
+        <div class="rt-clock">
+          <span>🕒</span>
+          <span id="rtClock">00:00:00</span>
+        </div>
+        <div id="rtDate" class="rt-date">Hoy</div>
+        <div class="rt-status">
+          <div class="pulse-dot"></div>
+          <span style="font-size:0.75rem; color:#6ee7b7;">En tiempo real</span>
+        </div>
+      </div>
+
+      <!-- Acciones de Cabecera -->
+      <div class="header-actions">
+        <button id="btnVoiceToggle" class="btn btn-outline" title="Activar/Silenciar voz del Asistente">
+          🔊 Voz On
+        </button>
+        <div id="badgeGemini" class="badge-gemini">
+          <span>🤖</span> Motor Cognitivo Local
+        </div>
+        <button id="btnOpenArch" class="btn btn-outline" title="Ver Arquitectura y Documentación">
+          <span>🏛️</span> Arquitectura
+        </button>
+        <button id="btnOpenSettings" class="btn btn-outline" title="Configurar Google Gemini API">
+          <span>⚙️</span> API Gemini
+        </button>
+      </div>
+    </header>
+
+    <!-- Layout Principal -->
+    <div class="main-grid">
+      <!-- Columna Principal de Tareas -->
+      <main>
+        <!-- Caja de Entrada en Lenguaje Natural -->
+        <section class="nl-box-card">
+          <div class="nl-header">
+            <div class="nl-title">
+              <span>🧠</span>
+              <span>Entrada en Lenguaje Natural con Agente AI</span>
+            </div>
+            <button id="btnResumenDiario" class="btn btn-action-accent">
+              <span>🎯 Generar Enfoque del Día (Skill 3)</span>
+            </button>
+          </div>
+
+          <form id="nlForm">
+            <div class="nl-input-container">
+              <input 
+                type="text" 
+                id="nlInput" 
+                class="nl-input" 
+                placeholder="Escribe en lenguaje coloquial (ej: 'Reunión urgente con el cliente mañana a las 3pm')..."
+                autocomplete="off"
+              >
+              <button type="button" id="micBtn" class="mic-btn" title="Hablar por micrófono (Dictado en tiempo real)">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" y1="19" x2="12" y2="23"/>
+                  <line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+              </button>
+              <button type="submit" id="submitTaskBtn" class="btn btn-primary">
+                <span>✨ Crear con IA</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Estado de voz -->
+          <div id="voiceStatus" class="voice-status-indicator"></div>
+
+          <!-- Chips de Ejemplo Rápido -->
+          <div class="examples-row">
+            <span class="examples-label">Ejemplos para probar:</span>
+            <button type="button" class="chip" data-prompt="Entregar el informe de Inteligencia Artificial para el parcial este viernes urgente">
+              🎓 Entrega informe de IA urgente
+            </button>
+            <button type="button" class="chip" data-prompt="Ir al supermercado a comprar víveres para la semana el sábado">
+              🛒 Comprar víveres el sábado
+            </button>
+            <button type="button" class="chip" data-prompt="Corregir bug crítico en producción antes de las 5 de la tarde hoy">
+              🚨 Bug crítico en producción hoy
+            </button>
+            <button type="button" class="chip" data-prompt="Llamar al médico mañana en la mañana para pedir cita general">
+              🩺 Cita médica mañana
+            </button>
+          </div>
+
+          <!-- HUD Cognitivo en Tiempo Real -->
+          <div id="cognitiveHUD" class="cognitive-hud">
+            <div style="font-size:0.75rem; color:#a5b4fc; font-weight:600;">⚡ Procesamiento Cognitivo en Tiempo Real:</div>
+            <div class="hud-steps-flow">
+              <div id="hudStep1" class="hud-step-pill">1. Percepción</div>
+              <div id="hudStep2" class="hud-step-pill">2. Intención</div>
+              <div id="hudStep3" class="hud-step-pill">3. Categorización</div>
+              <div id="hudStep4" class="hud-step-pill">4. Priorización</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Banner de Enfoque Diario (Skill 3) -->
+        <section id="dailyFocusCard" class="daily-focus-card">
+          <div class="df-header">
+            <div class="df-title">
+              <span>🎯</span>
+              <span>Recomendación Ejecutiva y Enfoque del Día</span>
+            </div>
+            <span class="badge-tag tag-urgente">Skill 3 Activa</span>
+          </div>
+          <p id="dfSummary" class="df-summary"></p>
+          <div id="dfTop3Grid" class="df-top3-grid"></div>
+          <div class="df-tip-box">
+            <span>💡</span>
+            <span id="dfTip"></span>
+          </div>
+        </section>
+
+        <!-- Barra de Búsqueda, Filtros y Ordenamiento -->
+        <div class="controls-bar">
+          <div class="search-box-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar tarea en tiempo real...">
+          </div>
+
+          <div style="display:flex; align-items:center; gap:8px;">
+            <label style="font-size:0.78rem; color:#9ca3af;">Ordenar:</label>
+            <select id="sortSelect" class="form-control" style="padding:6px 10px; font-size:0.8rem; width:auto;">
+              <option value="prioridad">Prioridad (Alta primero)</option>
+              <option value="fecha">Fecha Límite</option>
+              <option value="recientes">Más recientes</option>
+              <option value="titulo">Título (A - Z)</option>
+            </select>
+          </div>
+
+          <div class="tabs">
+            <button class="tab-btn active" data-status="pendientes">Pendientes</button>
+            <button class="tab-btn" data-status="todas">Todas</button>
+            <button class="tab-btn" data-status="completadas">Completadas</button>
+          </div>
+
+          <div class="cat-filters">
+            <button class="filter-badge cat-all active" data-cat="todas">Todas</button>
+            <button class="filter-badge cat-trabajo" data-cat="Trabajo">💼 Trabajo</button>
+            <button class="filter-badge cat-personal" data-cat="Personal">🏠 Personal</button>
+            <button class="filter-badge cat-urgente" data-cat="Urgente">🚨 Urgente</button>
+          </div>
+        </div>
+
+        <!-- Barra de Acciones Secundarias (Export, Import, Limpieza) -->
+        <div class="batch-actions-bar">
+          <div class="batch-links">
+            <button id="btnClearCompleted" class="link-btn">🧹 Limpiar completadas</button>
+            <button id="btnResetDemo" class="link-btn">🔄 Restablecer ejemplos</button>
+          </div>
+          <div class="batch-links">
+            <button id="btnExportJSON" class="link-btn">📥 Exportar JSON</button>
+            <button id="btnExportCSV" class="link-btn">📊 Exportar CSV</button>
+            <label class="link-btn" style="cursor:pointer;">
+              📤 Importar JSON
+              <input type="file" id="importJSONInput" accept=".json" style="display:none;">
+            </label>
+          </div>
+        </div>
+
+        <!-- Lista de Tarjetas de Tareas -->
+        <div id="tasksList" class="tasks-container">
+          <!-- Tarjetas renderizadas dinámicamente -->
+        </div>
+      </main>
+
+      <!-- Barra Lateral: Temporizador Pomodoro, Métricas, Flujo Cognitivo -->
+      <aside class="sidebar">
+        <!-- Widget: Temporizador Pomodoro en Tiempo Real -->
+        <div id="pomodoroCard" class="sidebar-card pomodoro-card">
+          <div class="sidebar-header">
+            <div class="sidebar-title">
+              <span>⏱️</span>
+              <span>Temporizador de Enfoque Pomodoro</span>
+            </div>
+            <span style="font-size:0.75rem; color:#38bdf8;">25 min</span>
+          </div>
+          <div id="pomoTaskLabel" class="pomo-task-label">Selecciona una tarea para enfocarte</div>
+          <div id="pomoDisplay" class="pomo-display">25:00</div>
+          <div class="pomo-controls">
+            <button id="pomoStartBtn" class="btn btn-primary" style="padding:8px 20px;">▶ Iniciar</button>
+            <button id="pomoResetBtn" class="btn btn-outline">↺ Reiniciar</button>
+          </div>
+        </div>
+
+        <!-- Widget: Métricas del Sistema -->
+        <div class="sidebar-card">
+          <div class="sidebar-header">
+            <div class="sidebar-title">
+              <span>📊</span>
+              <span>Métricas del Sistema</span>
+            </div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div id="statTotal" class="stat-number">0</div>
+              <div class="stat-label">Total Tareas</div>
+            </div>
+            <div class="stat-item">
+              <div id="statPendientes" class="stat-number" style="color: #60a5fa;">0</div>
+              <div class="stat-label">Pendientes</div>
+            </div>
+            <div class="stat-item">
+              <div id="statUrgentes" class="stat-number" style="color: #f87171;">0</div>
+              <div class="stat-label">Urgentes / Alta</div>
+            </div>
+            <div class="stat-item">
+              <div id="statCompletadas" class="stat-number" style="color: #34d399;">0</div>
+              <div class="stat-label">Completadas</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Widget: Terminal de Flujo Cognitivo en Vivo -->
+        <div class="sidebar-card">
+          <div class="sidebar-header">
+            <div class="sidebar-title">
+              <span>🛰️</span>
+              <span>Flujo Cognitivo en Tiempo Real</span>
+            </div>
+          </div>
+          <div id="cognitiveTerminal" class="cognitive-terminal">
+            <!-- Logs en tiempo real -->
+          </div>
+        </div>
+
+        <!-- Widget: Árbol de Arquitectura Modular -->
+        <div class="sidebar-card">
+          <div class="sidebar-header">
+            <div class="sidebar-title">
+              <span>🧬</span>
+              <span>Arquitectura Modular</span>
+            </div>
+          </div>
+          <div class="arch-tree">
+            <div class="arch-node">
+              <span class="arch-pill agent">Core Agent</span>
+              <span>core_agent.js (Coordinador)</span>
+            </div>
+            <div class="arch-node" style="padding-left: 14px;">
+              <span class="arch-pill skill">Skill 1</span>
+              <span>categorizacion.js</span>
+            </div>
+            <div class="arch-node" style="padding-left: 14px;">
+              <span class="arch-pill skill">Skill 2</span>
+              <span>priorizacion.js</span>
+            </div>
+            <div class="arch-node" style="padding-left: 14px;">
+              <span class="arch-pill skill">Skill 3</span>
+              <span>resumen_diario.js</span>
+            </div>
+            <div class="arch-node" style="padding-left: 28px;">
+              <span class="arch-pill engine">Engine</span>
+              <span>Google Gemini Flash API</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Modal: Editar Tarea (CRUD Completo) -->
+  <div id="modalEditTask" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ Editar Tarea</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <form id="formEditTask">
+        <input type="hidden" id="editTaskId">
+        <div class="form-group">
+          <label for="editTaskTitle">Título de la Tarea:</label>
+          <input type="text" id="editTaskTitle" class="form-control" required>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label for="editTaskCat">Categoría:</label>
+            <select id="editTaskCat" class="form-control">
+              <option value="Trabajo">💼 Trabajo</option>
+              <option value="Personal">🏠 Personal</option>
+              <option value="Urgente">🚨 Urgente</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editTaskPrio">Prioridad:</label>
+            <select id="editTaskPrio" class="form-control">
+              <option value="Alta">🔴 Alta</option>
+              <option value="Media">🟡 Media</option>
+              <option value="Baja">🟢 Baja</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label for="editTaskDeadline">Fecha Límite:</label>
+            <input type="date" id="editTaskDeadline" class="form-control">
+          </div>
+          <div class="form-group">
+            <label for="editTaskTime">Tiempo Estimado:</label>
+            <input type="text" id="editTaskTime" class="form-control" placeholder="ej: 45 min, 2h">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editTaskReasoning">Notas o Razonamiento del Agente:</label>
+          <textarea id="editTaskReasoning" class="form-control" rows="2"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-close-modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Configuración de Gemini API -->
+  <div id="modalSettings" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙️ Configuración de Google Gemini API</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <form id="formSettings">
+        <div class="form-group">
+          <label for="apiKeyInput">Google Gemini API Key (Opcional):</label>
+          <input 
+            type="password" 
+            id="apiKeyInput" 
+            class="form-control" 
+            placeholder="AIzaSy..."
+          >
+          <p style="font-size:0.75rem; color:#9ca3af; margin-top:6px;">
+            Si no ingresas una clave, IntelliPlan AI opera de forma nativa e ilimitada con su <strong>Motor Cognitivo Local</strong> basado en procesamiento de lenguaje natural y heurísticas semánticas. La clave se almacena exclusivamente en tu navegador (localStorage).
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline btn-close-modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar Configuración</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Arquitectura y Documentación -->
+  <div id="modalArch" class="modal-overlay">
+    <div class="modal-card" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🏛️ Arquitectura del Proyecto IntelliPlan AI</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div style="font-size:0.85rem; color:#cbd5e1; line-height:1.6; max-height:450px; overflow-y:auto; padding-right:10px;">
+        <h4 style="color:#a5b4fc; margin-bottom:4px;">Materia: Inteligencia Artificial Aplicada</h4>
+        <p style="font-size:0.8rem; color:#94a3b8; margin-bottom:14px;">
+          Integrantes: Nikoll Florez • Alan Rangel • Carlos Movilla
+        </p>
+
+        <h4 style="color:#ffffff; margin-top:12px; margin-bottom:6px;">1. Núcleo Cognitivo: Core Agent</h4>
+        <p>
+          El <code>CoreAgent</code> actúa como el núcleo cognitivo del sistema. Interpreta cualquier entrada en lenguaje coloquial, analiza la intención del usuario y delega dinámicamente la ejecución a habilidades especializadas (Skills).
+        </p>
+
+        <h4 style="color:#ffffff; margin-top:12px; margin-bottom:6px;">2. Skills Modulares</h4>
+        <ul style="padding-left: 20px; margin-bottom: 12px;">
+          <li><strong>skill-categorizacion:</strong> Clasifica la tarea semánticamente en <em>Trabajo</em>, <em>Personal</em> o <em>Urgente</em>.</li>
+          <li><strong>skill-priorizacion:</strong> Evalúa la urgencia y plazos implícitos o explícitos para asignar prioridad (<em>Alta</em>, <em>Media</em>, <em>Baja</em>) y fecha recomendada.</li>
+          <li><strong>skill-resumen-diario:</strong> Analiza todos los pendientes activos y genera una recomendación ejecutiva de las 3 tareas críticas para enfocarse hoy.</li>
+        </ul>
+
+        <h4 style="color:#ffffff; margin-top:12px; margin-bottom:6px;">3. Tecnología de IA Unificada</h4>
+        <p>
+          Utiliza Google Gemini Flash API como motor de IA en la nube, con un motor semántico local integrado de alta fidelidad para operar sin interrupciones ni dependencias externas.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-close-modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Script Principal de la Aplicación -->
+  <script src="js/app.js"></script>
+</body>
+</html>
